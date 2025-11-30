@@ -9,22 +9,28 @@ services:
     command: ["mvn", "-DskipTests", "spring-boot:run"]
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - MYSQL_DATABASE_NAME=${MYSQL_DATABASE_NAME}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "8080:8080"
       - "5005:5005"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     stdin_open: true
     tty: true
 
   mysql:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: ${MYSQL_DATABASE_NAME}
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: wishly_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
