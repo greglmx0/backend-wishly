@@ -1,6 +1,9 @@
 package com.greglmx.wishly.controller;
 
-import com.greglmx.wishly.model.*;
+import com.greglmx.wishly.dto.LoginRequest;
+import com.greglmx.wishly.dto.LoginResponse;
+import com.greglmx.wishly.dto.SuccessCreateResponse;
+import com.greglmx.wishly.model.User;
 import com.greglmx.wishly.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +17,12 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
+    public ResponseEntity<SuccessCreateResponse> registerUser(@Valid @RequestBody User user) {
         return ResponseEntity.ok(authService.register(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody AuthenticationRequest request) {
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 

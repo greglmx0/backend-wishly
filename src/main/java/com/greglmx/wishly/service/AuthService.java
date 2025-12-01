@@ -1,6 +1,8 @@
 package com.greglmx.wishly.service;
 
-import com.greglmx.wishly.model.AuthenticationRequest;
+import com.greglmx.wishly.dto.LoginRequest;
+import com.greglmx.wishly.dto.LoginResponse;
+import com.greglmx.wishly.dto.SuccessCreateResponse;
 import com.greglmx.wishly.model.User;
 import com.greglmx.wishly.repository.UserRepository;
 import com.greglmx.wishly.util.JwtUtil;
@@ -26,7 +28,7 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String register(User user) {
+    public SuccessCreateResponse register(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null ||
         userRepository.findByEmail(user.getEmail()) != null) {
             throw new AlreadyExistsException("Username or email already exists");
@@ -34,13 +36,16 @@ public class AuthService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole(User.Role.USER);
 
-        User responce = userRepository.save(user);
-        return "User %s registered successfully".formatted(responce.getUsername());
+        User response = userRepository.save(user);
+        return new SuccessCreateResponse("User %s registered successfully".formatted(response.getUsername()));
     }
 
-    public String login(AuthenticationRequest request) {
+    public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails userDetails = userService.loadUserByUsername(request.getUsername());
-        return jwtUtil.generateToken(userDetails);
+
+        String token = jwtUtil.generateToken(userDetails);
+        String message = "User %s logged in successfully".formatted(request.getUsername());
+        return new LoginResponse(message, token);
     }
 }
