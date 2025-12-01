@@ -50,4 +50,12 @@ public class User {
     public boolean isPresent() {
         return this.id != null;
     }
+
+    public Role getRole() {
+        return this.role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }
