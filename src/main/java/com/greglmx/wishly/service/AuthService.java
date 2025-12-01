@@ -4,6 +4,7 @@ import com.greglmx.wishly.model.AuthenticationRequest;
 import com.greglmx.wishly.model.User;
 import com.greglmx.wishly.repository.UserRepository;
 import com.greglmx.wishly.util.JwtUtil;
+import com.greglmx.wishly.exception.AlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,13 +29,13 @@ public class AuthService {
     public String register(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null ||
         userRepository.findByEmail(user.getEmail()) != null) {
-            throw new IllegalArgumentException("Username or email already exists");
+            throw new AlreadyExistsException("Username or email already exists");
         }
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole(User.Role.USER);
 
         User responce = userRepository.save(user);
-        return "User registered successfully with id: " + responce.getId();
+        return "User %s registered successfully".formatted(responce.getUsername());
     }
 
     public String login(AuthenticationRequest request) {

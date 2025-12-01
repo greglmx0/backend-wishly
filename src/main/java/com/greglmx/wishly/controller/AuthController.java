@@ -27,6 +27,4 @@ public class AuthController {
     public String hello() {
         return "Hello, Secure World!";
     }
-
-    // Validation and error handling moved to GlobalExceptionHandler
 }
