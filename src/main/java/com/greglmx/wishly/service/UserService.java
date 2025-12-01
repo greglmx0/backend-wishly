@@ -21,4 +21,11 @@ public class UserService implements UserDetailsService {
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
+
+    /**
+     * Return the JPA User entity for callers that need access to the id or other fields.
+     */
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

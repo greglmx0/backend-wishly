@@ -4,6 +4,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import com.greglmx.wishly.service.UserService;
 import com.greglmx.wishly.util.JwtUtil;
+import com.greglmx.wishly.model.User;
+import com.greglmx.wishly.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,8 +39,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
             if (jwtUtil.validateToken(token, userDetails)) {
+                // load JPA user entity and create a lightweight principal to avoid lazy-loading collections
+                User user = userService.getUserByUsername(username);
+                UserPrincipal principal = new UserPrincipal(user);
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

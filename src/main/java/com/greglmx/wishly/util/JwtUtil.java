@@ -41,6 +41,15 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
+    public Long extractUserId(String token) {
+        try {
+            Number n = extractClaim(token, claims -> claims.get("uid", Number.class));
+            return n == null ? null : n.longValue();
+        } catch (JwtException | IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
     private Claims extractAllClaims(String token) {
         try {
             return Jwts.parserBuilder()
@@ -60,6 +69,17 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         return createToken(new HashMap<>(), userDetails.getUsername());
+    }
+
+    /**
+     * Generate a token containing the username (subject) and the user id as a claim `uid`.
+     */
+    public String generateToken(UserDetails userDetails, Long userId) {
+        Map<String, Object> claims = new HashMap<>();
+        if (userId != null) {
+            claims.put("uid", userId);
+        }
+        return createToken(claims, userDetails.getUsername());
     }
 
     public String createToken(Map<String, Object> claims, String subject) {

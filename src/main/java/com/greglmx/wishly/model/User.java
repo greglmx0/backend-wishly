@@ -2,6 +2,10 @@ package com.greglmx.wishly.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Data
@@ -18,9 +22,17 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Wishlist> wishlists = new ArrayList<>();
+
     public enum Role {
         USER,
         ADMIN
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public String getUsername() {
