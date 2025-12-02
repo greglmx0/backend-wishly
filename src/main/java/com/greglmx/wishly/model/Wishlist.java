@@ -2,7 +2,7 @@ package com.greglmx.wishly.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,9 +14,9 @@ public class Wishlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JsonIgnoreProperties({"wishlists", "password", "email"})
-    private User owner;
+    // exclude owner from JSON serialization to prevent circular references
+    @JsonIgnore
+    private Long ownerId;
 
     private String name;
     private String description;
@@ -28,19 +28,20 @@ public class Wishlist {
     }
 
     @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
     private List<Gift> gifts;
 
-    // Explicit accessors to avoid relying on Lombok at compile time in all environments
     public Long getId() {
         return this.id;
     }
 
-    public User getOwner() {
-        return this.owner;
+    public Long getOwnerId() {
+        return this.ownerId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getName() {

@@ -14,7 +14,8 @@ import com.greglmx.wishly.dto.SuccessCreateResponse;
 import com.greglmx.wishly.service.WishlistService;
 import com.greglmx.wishly.model.Wishlist;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -33,9 +34,9 @@ public class WishlistController {
     }
 
     @GetMapping("/wishlists")
-    public ResponseEntity<ArrayList<Wishlist>> getWishlistsByOwner(
+    public ResponseEntity<List<Wishlist>> getWishlistsByOwner(
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        ArrayList<Wishlist> wishlists = wishlistService.getWishlistsByOwnerId(userPrincipal.getUsername());
+        List<Wishlist> wishlists = wishlistService.getWishlistsByOwnerId(userPrincipal.getId());
         return ResponseEntity.ok(wishlists);
             }
 }

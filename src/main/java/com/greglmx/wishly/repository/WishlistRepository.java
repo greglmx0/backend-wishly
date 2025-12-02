@@ -2,9 +2,9 @@ package com.greglmx.wishly.repository;
 
 import com.greglmx.wishly.model.Wishlist;
 import org.springframework.data.repository.CrudRepository;
-import java.util.ArrayList;
+import java.util.List;
 
 public interface WishlistRepository extends CrudRepository<Wishlist, Long> {
-    public boolean existsByOwnerAndName(com.greglmx.wishly.model.User owner, String name);
-    public ArrayList<Wishlist> findByOwnerId(Long ownerId);
+    public boolean existsByOwnerIdAndName(Long ownerId, String name);
+    public List<Wishlist> findByOwnerId(Long ownerId);
 }

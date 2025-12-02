@@ -7,7 +7,7 @@ import com.greglmx.wishly.model.User;
 // CRUD refers Create, Read, Update, Delete
 
 public interface UserRepository extends CrudRepository<User, Integer> {
+    User findById(long id);
     User findByUsername(String username);
-
     User findByEmail(String email);
 }

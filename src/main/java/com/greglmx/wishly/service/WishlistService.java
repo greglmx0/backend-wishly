@@ -6,10 +6,11 @@ import com.greglmx.wishly.model.User;
 import com.greglmx.wishly.model.Wishlist;
 import com.greglmx.wishly.repository.UserRepository;
 import com.greglmx.wishly.repository.WishlistRepository;
+import com.greglmx.wishly.exception.NotFoundException;
 
 import jakarta.transaction.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,27 +29,24 @@ public class WishlistService {
             throw new UsernameNotFoundException("User not found: " + username);
         }
 
-        // check for duplicate wishlist names for the same user could be added here
-        if (wishlistRepository.existsByOwnerAndName(owner, dto.getName())) {
+        if (wishlistRepository.existsByOwnerIdAndName(owner.getId(), dto.getName())) {
             throw new IllegalArgumentException("Wishlist with the same name already exists");
         }
 
         Wishlist w = new Wishlist();
         w.setName(dto.getName());
         w.setDescription(dto.getDescription());
-        w.setOwner(owner);
+        w.setOwnerId(owner.getId());
 
         Wishlist saved = wishlistRepository.save(w);
         return new SuccessCreateResponse("Wishlist %s created".formatted(saved.getId()));
     }
 
-    public ArrayList<Wishlist> getWishlistsByOwnerId(String username) {
-        User owner = userRepository.findByUsername(username);
-        System.out.println("Fetching wishlists for user: ");
-        System.out.println("Fetching wishlists for user: " + owner);
+    public List<Wishlist> getWishlistsByOwnerId(Long ownerId) {
+        User owner = userRepository.findById(ownerId);
 
         if (owner == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
+            throw new NotFoundException("User not found: " + ownerId);
         }
         return wishlistRepository.findByOwnerId(owner.getId());
     }
