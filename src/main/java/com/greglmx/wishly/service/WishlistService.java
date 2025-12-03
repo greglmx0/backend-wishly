@@ -37,9 +37,11 @@ public class WishlistService {
         w.setName(dto.getName());
         w.setDescription(dto.getDescription());
         w.setOwnerId(owner.getId());
+        w.setVisibility(dto.getVisibility() != null ? dto.getVisibility() : Wishlist.Visibility.PUBLIC);
+        w.setCountGifts(0);
 
         Wishlist saved = wishlistRepository.save(w);
-        return new SuccessCreateResponse("Wishlist %s created".formatted(saved.getId()));
+        return new SuccessCreateResponse("Wishlist %s created".formatted(saved.getName()));
     }
 
     public List<Wishlist> getWishlistsByOwnerId(Long ownerId) {

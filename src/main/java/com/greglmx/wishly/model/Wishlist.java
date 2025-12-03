@@ -1,7 +1,5 @@
 package com.greglmx.wishly.model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -27,10 +25,10 @@ public class Wishlist {
         FRIENDS_ONLY
     }
 
-    @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL, orphanRemoval = true)
-    @lombok.ToString.Exclude
-    @lombok.EqualsAndHashCode.Exclude
-    private List<Gift> gifts;
+    // @OneToMany(mappedBy = "wishlistId", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<Gift> gifts;
+
+    private Integer countGifts;
 
     public Long getId() {
         return this.id;
@@ -60,11 +58,27 @@ public class Wishlist {
         this.description = description;
     }
 
-    public java.util.List<Gift> getGifts() {
-        return this.gifts;
+    // public java.util.List<Gift> getGifts() {
+    //     return this.gifts;
+    // }
+
+    // public void setGifts(java.util.List<Gift> gifts) {
+    //     this.gifts = gifts;
+    // }
+
+    public Wishlist.Visibility getVisibility() {
+        return this.visibility;
     }
 
-    public void setGifts(java.util.List<Gift> gifts) {
-        this.gifts = gifts;
+    public void setVisibility(Wishlist.Visibility visibility) {
+        this.visibility = visibility;
+    }
+
+    public Integer getCountGifts() {
+        return this.countGifts;
+    }
+
+    public void setCountGifts(Integer countGifts) {
+        this.countGifts = countGifts;
     }
 }

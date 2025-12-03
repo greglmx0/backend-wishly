@@ -1,6 +1,8 @@
 
 package com.greglmx.wishly.dto;
 
+import com.greglmx.wishly.model.Wishlist;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -12,6 +14,8 @@ public class CreateWishlistRequest {
 
     @Size(max = 2000, message = "description must be at most 2000 characters")
     private String description;
+    
+    private String visibility;
 
     public CreateWishlistRequest() {}
 
@@ -34,5 +38,12 @@ public class CreateWishlistRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Wishlist.Visibility getVisibility() {
+        return Wishlist.Visibility.valueOf(visibility);
+    }
+    public void setVisibility( Wishlist.Visibility visibility) {
+        this.visibility = visibility.name();
     }
 }

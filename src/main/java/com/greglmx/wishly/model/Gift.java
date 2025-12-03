@@ -1,7 +1,7 @@
 package com.greglmx.wishly.model;
 
 import jakarta.persistence.Id;
-import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,12 +15,13 @@ public class Gift {
     private String name;
     private String description;
     private Double price;
-    private ArrayList<String> images;
-    private ArrayList<String> tags;
+    @ElementCollection
+    private List<String> images;
+    @ElementCollection
+    private List<String> tags;
     private String url;
 
-    @ManyToOne
-    private Wishlist wishlist;
+    private Long wishlistId;
     private Visibility visibility;
     public enum Visibility {
         PUBLIC,
