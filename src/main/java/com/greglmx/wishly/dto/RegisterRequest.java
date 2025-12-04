@@ -1,20 +1,17 @@
-package com.greglmx.wishly.model;
+package com.greglmx.wishly.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
-public class AuthenticationRequest {
-    @NotBlank(message = "username is required")
+public class RegisterRequest {
     private String username;
-
-    @NotBlank(message = "password is required")
     private String password;
+    private String email;
 
-    public AuthenticationRequest() {
+    public RegisterRequest() {
     }
 
-    public AuthenticationRequest(String username, String password) {
+    public RegisterRequest(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     public String getUsername() {
@@ -31,5 +28,13 @@ public class AuthenticationRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

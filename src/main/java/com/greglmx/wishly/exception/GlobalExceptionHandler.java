@@ -78,4 +78,24 @@ public class GlobalExceptionHandler {
         apiError.setPath(request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleAlreadyExists(AlreadyExistsException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError();
+        apiError.setStatus(HttpStatus.CONFLICT.value());
+        apiError.setError("Already Exists");
+        apiError.setMessage(ex.getMessage());
+        apiError.setPath(request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(NotFoundException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError();
+        apiError.setStatus(HttpStatus.NOT_FOUND.value());
+        apiError.setError("Not Found");
+        apiError.setMessage(ex.getMessage());
+        apiError.setPath(request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
 }
