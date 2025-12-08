@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:8.0
@@ -9,8 +7,8 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306" nginx proxy manager uses docker network
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -34,11 +32,10 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-36000000}
-    ports:
-      - "4101:4101"
+    # ports:
+    #   - "4101:4101" nginx proxy manager uses docker network
     restart: unless-stopped
 
 volumes:

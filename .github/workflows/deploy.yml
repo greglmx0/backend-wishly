@@ -63,7 +63,6 @@ jobs:
           overwrite: true
 
       - name: Restart Docker containers
-        uses: appleboy/ssh-action@master
         env:
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           MYSQL_DATABASE_NAME: ${{ secrets.MYSQL_DATABASE_NAME }}
@@ -72,6 +71,7 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION_MS: ${{ secrets.JWT_EXPIRATION_MS }}
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
