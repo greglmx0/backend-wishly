@@ -15,7 +15,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "8080:8080"
+      - "4101:4101"
       - "5005:5005"
     depends_on:
       mysql:

@@ -37,9 +37,8 @@ services:
 
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-36000000}
-      - SERVER_PORT=8080
     ports:
-      - "8080:8080"
+      - "4101:4101"
     restart: unless-stopped
 
 volumes:
