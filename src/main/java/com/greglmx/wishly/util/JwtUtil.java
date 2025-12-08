@@ -25,7 +25,22 @@ public class JwtUtil {
     private long jwtExpirationMs;
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        String envSecret = System.getenv("JWT_SECRET");
+
+        String effectiveSecret = (envSecret != null && !envSecret.isEmpty()) ? envSecret : SECRET_KEY;
+        return Keys.hmacShaKeyFor(effectiveSecret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private long getJwtExpirationMs() {
+        String envExpiration = System.getenv("JWT_EXPIRATION_MS");
+        if (envExpiration != null && !envExpiration.isEmpty()) {
+            try {
+                return Long.parseLong(envExpiration);
+            } catch (NumberFormatException e) {
+                // log warning if needed
+            }
+        }
+        return jwtExpirationMs;
     }
 
     public String extractUsername(String token) {
@@ -84,7 +99,7 @@ public class JwtUtil {
 
     public String createToken(Map<String, Object> claims, String subject) {
         Date now = new Date(System.currentTimeMillis());
-        Date expiry = new Date(System.currentTimeMillis() + jwtExpirationMs);
+        Date expiry = new Date(System.currentTimeMillis() + getJwtExpirationMs());
 
         // build token by adding claims individually to avoid deprecated setClaims API
         io.jsonwebtoken.JwtBuilder builder = Jwts.builder();
