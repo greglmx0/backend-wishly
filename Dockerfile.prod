@@ -2,8 +2,7 @@ FROM eclipse-temurin:25-jre-jammy
 
 WORKDIR /app
 
-# Copy the prebuilt Spring Boot jar from the build artifacts
-COPY target/*.jar app.jar
+COPY *.jar app.jar
 
 EXPOSE 8080
 

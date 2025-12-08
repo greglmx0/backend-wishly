@@ -78,6 +78,6 @@ jobs:
             export MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}'
             export MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'
             export MYSQL_USER='${{ secrets.MYSQL_USER }}'
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up -d --build --force-recreate
-            docker system prune -f
+            docker compose -f docker-compose.prod.yml build --no-cache app
+            docker compose -f docker-compose.prod.yml up -d --no-deps --force-recreate app
+            docker image prune -f
