@@ -64,6 +64,14 @@ jobs:
 
       - name: Restart Docker containers
         uses: appleboy/ssh-action@master
+        env:
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MYSQL_DATABASE_NAME: ${{ secrets.MYSQL_DATABASE_NAME }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION_MS: ${{ secrets.JWT_EXPIRATION_MS }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
@@ -71,13 +79,6 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             cd /var/www/html/wishly
-            export JWT_EXPIRATION_MS='${{ secrets.JWT_EXPIRATION_MS }}'
-            export JWT_SECRET='${{ secrets.JWT_SECRET }}'
-            export MYSQL_DATABASE='${{ secrets.MYSQL_DATABASE }}'
-            export MYSQL_DATABASE_NAME='${{ secrets.MYSQL_DATABASE_NAME }}'
-            export MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}'
-            export MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'
-            export MYSQL_USER='${{ secrets.MYSQL_USER }}'
-            docker compose -f docker-compose.prod.yml build --no-cache app
-            docker compose -f docker-compose.prod.yml up -d --no-deps --force-recreate app
-            docker image prune -f
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up -d --build --force-recreate
+            docker system prune -f
