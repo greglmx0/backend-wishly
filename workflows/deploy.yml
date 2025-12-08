@@ -1,0 +1,83 @@
+name: Build and deploy Spring Boot Backend
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Build Spring Boot jar
+        run: mvn -B clean package -DskipTests
+
+      - name: Prepare deployment files
+        run: |
+          mkdir -p deploy
+          cp target/*.jar deploy/
+          cp Dockerfile.prod docker-compose.prod.yml deploy/
+
+      - name: List deploy directory
+        run: ls -la deploy/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wishly-build
+          path: deploy/
+          retention-days: 1
+          include-hidden-files: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: wishly-build
+          path: ./deploy
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          source: './deploy/*'
+          target: '/var/www/html/wishly'
+          strip_components: 1
+          overwrite: true
+
+      - name: Restart Docker containers
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd /var/www/html/wishly
+            export JWT_EXPIRATION_MS='${{ secrets.JWT_EXPIRATION_MS }}'
+            export JWT_SECRET='${{ secrets.JWT_SECRET }}'
+            export MYSQL_DATABASE='${{ secrets.MYSQL_DATABASE }}'
+            export MYSQL_DATABASE_NAME='${{ secrets.MYSQL_DATABASE_NAME }}'
+            export MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}'
+            export MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'
+            export MYSQL_USER='${{ secrets.MYSQL_USER }}'
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up -d --build --force-recreate
+            docker system prune -f
