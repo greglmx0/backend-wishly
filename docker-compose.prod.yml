@@ -34,8 +34,8 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-36000000}
-    # ports:
-    #   - "4101:4101" nginx proxy manager uses docker network
+    ports:
+      - "4101:4101"
     restart: unless-stopped
 
 volumes:
