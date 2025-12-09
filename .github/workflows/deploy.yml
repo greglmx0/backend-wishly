@@ -58,7 +58,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
           source: './deploy/*'
-          target: '/var/www/html/wishly'
+          target: '/var/www/html/backend-wishly'
           strip_components: 1
           overwrite: true
 
@@ -79,7 +79,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           envs: MYSQL_DATABASE, MYSQL_DATABASE_NAME, MYSQL_ROOT_PASSWORD, MYSQL_USER, MYSQL_PASSWORD, JWT_SECRET, JWT_EXPIRATION_MS
           script: |
-            cd /var/www/html/wishly
+            cd /var/www/html/backend-wishly
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build --force-recreate
             docker system prune -f
