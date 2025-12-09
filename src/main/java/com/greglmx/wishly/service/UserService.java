@@ -15,15 +15,23 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        // For Spring Security's loadUserByUsername, we still use this method but load by email
+        User user = userRepository.findByEmailIgnoreCase(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("User not found with email: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 
     /**
-     * Return the JPA User entity for callers that need access to the id or other fields.
+     * Load user by email (used for authentication).
+     */
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    /**
+     * Return the JPA User entity by username (kept for backward compatibility).
      */
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
