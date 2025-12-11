@@ -11,6 +11,7 @@ import com.greglmx.wishly.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,6 +51,7 @@ public class WishlistService {
         if (owner == null) {
             throw new NotFoundException("User not found: " + ownerId);
         }
-        return wishlistRepository.findByOwnerId(owner.getId());
+        List<Wishlist> wishlists = wishlistRepository.findByOwnerId(owner.getId());
+        return wishlists != null ? wishlists : Collections.emptyList();
     }
 }
