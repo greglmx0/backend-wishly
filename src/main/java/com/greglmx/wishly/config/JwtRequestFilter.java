@@ -34,19 +34,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
             username = jwtUtil.extractUsername(token);
+        } else {
+            logger.debug("JWT Token does not begin with Bearer String");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
             if (jwtUtil.validateToken(token, userDetails)) {
-                // load JPA user entity and create a lightweight principal to avoid lazy-loading collections
-                User user = userService.getUserByUsername(username);
+                User user = userService.getUserByEmail(username);
                 UserPrincipal principal = new UserPrincipal(user);
                 UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                logger.debug("Invalid JWT Token");
             }
+        }  else {
+            logger.debug("Username is null or context already has authentication");
         }
         chain.doFilter(request, response);
     }
