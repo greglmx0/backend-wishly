@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -29,6 +30,23 @@ public class Wishlist {
     // private List<Gift> gifts;
 
     private Integer countGifts;
+
+    @Column(updatable = false)
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 
     public Long getId() {
         return this.id;
@@ -81,4 +99,8 @@ public class Wishlist {
     public void setCountGifts(Integer countGifts) {
         this.countGifts = countGifts;
     }
+
+    public Instant getCreatedAt() { return this.createdAt; }
+    public Instant getUpdatedAt() { return this.updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

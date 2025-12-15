@@ -24,10 +24,10 @@ public class WishlistService {
     @Autowired private UserRepository userRepository;
 
     @Transactional
-    public SuccessCreateResponse createWishlist(CreateWishlistRequest dto, String username) {
-        User owner = userRepository.findByUsername(username);
+    public Wishlist createWishlist(CreateWishlistRequest dto, Long userId) {
+        User owner = userRepository.findById(userId);
         if (owner == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
+            throw new UsernameNotFoundException("User not found: " + userId);
         }
 
         if (wishlistRepository.existsByOwnerIdAndName(owner.getId(), dto.getName())) {
@@ -38,11 +38,18 @@ public class WishlistService {
         w.setName(dto.getName());
         w.setDescription(dto.getDescription());
         w.setOwnerId(owner.getId());
-        w.setVisibility(dto.getVisibility() != null ? dto.getVisibility() : Wishlist.Visibility.PUBLIC);
+        Wishlist.Visibility vis = Wishlist.Visibility.PUBLIC;
+        if (dto.getVisibility() != null) {
+            try {
+                vis = Wishlist.Visibility.valueOf(dto.getVisibility());
+            } catch (IllegalArgumentException ex) {
+                vis = Wishlist.Visibility.PUBLIC;
+            }
+        }
+        w.setVisibility(vis);
         w.setCountGifts(0);
 
-        Wishlist saved = wishlistRepository.save(w);
-        return new SuccessCreateResponse("Wishlist %s created".formatted(saved.getName()));
+        return wishlistRepository.save(w);
     }
 
     public List<Wishlist> getWishlistsByOwnerId(Long ownerId) {
@@ -53,5 +60,32 @@ public class WishlistService {
         }
         List<Wishlist> wishlists = wishlistRepository.findByOwnerId(owner.getId());
         return wishlists != null ? wishlists : Collections.emptyList();
+    }
+    
+    public Wishlist updateWishlist(Wishlist wishlistUpdates) {
+        Wishlist existing = wishlistRepository.findById(wishlistUpdates.getId()).orElse(null);
+        if (existing == null) {
+            throw new NotFoundException("Wishlist not found: " + wishlistUpdates.getId());
+        }
+
+        if (wishlistUpdates.getName() != null) {
+            existing.setName(wishlistUpdates.getName());
+        }
+        if (wishlistUpdates.getDescription() != null) {
+            existing.setDescription(wishlistUpdates.getDescription());
+        }
+        if (wishlistUpdates.getVisibility() != null) {
+            existing.setVisibility(wishlistUpdates.getVisibility());
+        }
+        if (wishlistUpdates.getCountGifts() != null) {
+            existing.setCountGifts(wishlistUpdates.getCountGifts());
+        }
+        // Do NOT allow changing ownerId via updates
+
+        return wishlistRepository.save(existing);
+    }
+
+    public void deleteWishlist(Long wishlistId) {
+        wishlistRepository.deleteById(wishlistId);
     }
 }

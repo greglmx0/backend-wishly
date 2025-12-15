@@ -14,7 +14,6 @@ public class CreateWishlistRequest {
 
     @Size(max = 2000, message = "description must be at most 2000 characters")
     private String description;
-    
     private String visibility;
 
     public CreateWishlistRequest() {}
@@ -40,10 +39,10 @@ public class CreateWishlistRequest {
         this.description = description;
     }
 
-    public Wishlist.Visibility getVisibility() {
-        return Wishlist.Visibility.valueOf(visibility);
+    public String getVisibility() {
+        return visibility;
     }
-    public void setVisibility( Wishlist.Visibility visibility) {
-        this.visibility = visibility.name();
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
     }
 }
