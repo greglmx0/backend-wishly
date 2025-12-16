@@ -1,6 +1,5 @@
 package com.greglmx.wishly.service;
 
-import com.greglmx.wishly.dto.SuccessCreateResponse;
 import com.greglmx.wishly.dto.CreateWishlistRequest;
 import com.greglmx.wishly.model.User;
 import com.greglmx.wishly.model.Wishlist;
@@ -61,7 +60,7 @@ public class WishlistService {
         List<Wishlist> wishlists = wishlistRepository.findByOwnerId(owner.getId());
         return wishlists != null ? wishlists : Collections.emptyList();
     }
-    
+
     public Wishlist updateWishlist(Wishlist wishlistUpdates) {
         Wishlist existing = wishlistRepository.findById(wishlistUpdates.getId()).orElse(null);
         if (existing == null) {

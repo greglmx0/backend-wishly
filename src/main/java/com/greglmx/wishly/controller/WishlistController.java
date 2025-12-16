@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.greglmx.wishly.security.UserPrincipal;
 import com.greglmx.wishly.dto.CreateWishlistRequest;
-import com.greglmx.wishly.dto.SuccessCreateResponse;
 import com.greglmx.wishly.service.WishlistService;
 import com.greglmx.wishly.model.Wishlist;
 
