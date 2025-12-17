@@ -56,4 +56,10 @@ public class WishlistController {
         wishlistService.deleteWishlist(id);
         return ResponseEntity.noContent().build();
             }
+
+    @GetMapping("/wishlist/{id}/check-owner")
+    public ResponseEntity<Boolean> checkOwner(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Boolean isOwner = wishlistService.ChekOwnerWishlist(id, userPrincipal.getId());
+        return ResponseEntity.ok(isOwner);
+    }
 }

@@ -87,4 +87,12 @@ public class WishlistService {
     public void deleteWishlist(Long wishlistId) {
         wishlistRepository.deleteById(wishlistId);
     }
+
+    public Boolean ChekOwnerWishlist(Long wishlistId, Long userId) {
+        Wishlist wishlist = wishlistRepository.findById(wishlistId).orElse(null);
+        if (wishlist == null) {
+            throw new NotFoundException("Wishlist not found: " + wishlistId);
+        }
+        return wishlist.getOwnerId().equals(userId);
+    }
 }

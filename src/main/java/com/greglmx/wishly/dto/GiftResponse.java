@@ -3,6 +3,7 @@ package com.greglmx.wishly.dto;
 import com.greglmx.wishly.model.Gift.Visibility;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -16,4 +17,6 @@ public class GiftResponse {
     private String url;
     private Visibility visibility;
     private Long wishlistId;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

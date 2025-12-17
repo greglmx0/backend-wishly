@@ -25,7 +25,9 @@ public class SecurityConfig {
             "/register",
             "/login",
             "/test",
-            "/hello"
+            "/hello",
+            "/wishlist/{id}",
+            "/wishlist/{id}/gifts",
     };
 
     @Bean

@@ -36,9 +36,22 @@ public class GiftService {
 
     public List<GiftResponse> listByWishlist(Long wishlistId) {
         ensureWishlistExists(wishlistId);
-        return giftRepository.findByWishlistId(wishlistId).stream()
+        // if wishlist is private, ensure owner
+        Wishlist wishlist = wishlistRepository.findById(wishlistId)
+                .orElseThrow(() -> new NotFoundException("Wishlist not found or access denied"));
+        if (wishlist.getVisibility() == Wishlist.Visibility.PRIVATE) {
+            Long ownerId = wishlist.getOwnerId();
+            Long currentUserId = getCurrentUserId();
+            if (ownerId == null || currentUserId == null || !ownerId.equals(currentUserId)) {
+                throw new NotFoundException("Wishlist not found or access denied");
+            }
+        }
+
+        List<GiftResponse> gifts = giftRepository.findByWishlistId(wishlistId).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+
+        return gifts;
     }
 
     @Transactional
@@ -71,14 +84,14 @@ public class GiftService {
     public GiftResponse update(Long giftId, UpdateGiftRequest request) {
         validate(request);
         Gift gift = giftRepository.findById(giftId)
-                .orElseThrow(() -> new NotFoundException("Gift not found"));
-        gift.setName(request.getName());
-        gift.setDescription(request.getDescription());
-        gift.setPrice(request.getPrice());
-        gift.setImages(request.getImages() != null ? new java.util.ArrayList<>(request.getImages()) : null);
-        gift.setTags(request.getTags() != null ? new java.util.ArrayList<>(request.getTags()) : null);
-        gift.setUrl(request.getUrl());
-        gift.setVisibility(request.getVisibility());
+            .orElseThrow(() -> new NotFoundException("Gift not found"));
+        if (request.getName() != null) gift.setName(request.getName());
+        if (request.getDescription() != null) gift.setDescription(request.getDescription());
+        if (request.getPrice() != null) gift.setPrice(request.getPrice());
+        if (request.getImages() != null) gift.setImages(new java.util.ArrayList<>(request.getImages()));
+        if (request.getTags() != null) gift.setTags(new java.util.ArrayList<>(request.getTags()));
+        if (request.getUrl() != null) gift.setUrl(request.getUrl());
+        if (request.getVisibility() != null) gift.setVisibility(request.getVisibility());
         gift = giftRepository.save(gift);
         return toResponse(gift);
     }
