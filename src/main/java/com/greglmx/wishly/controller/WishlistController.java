@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 @RestController
 public class WishlistController {
 
-     @Autowired
+    @Autowired
     private WishlistService wishlistService;
     
     @PostMapping("/wishlists")
@@ -41,6 +41,15 @@ public class WishlistController {
         return ResponseEntity.ok(wishlists);
             }
 
+    @GetMapping("/wishlist/{id}/check-owner")
+    public ResponseEntity<Boolean> checkOwner(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            return ResponseEntity.ok(false);
+        }
+        Boolean isOwner = wishlistService.ChekOwnerWishlist(id, userPrincipal.getId());
+        return ResponseEntity.ok(isOwner);
+    }
+
     @PutMapping("/wishlist/{id}")
     public ResponseEntity<Wishlist> updateWishlist
             (@PathVariable Long id,
@@ -57,9 +66,4 @@ public class WishlistController {
         return ResponseEntity.noContent().build();
             }
 
-    @GetMapping("/wishlist/{id}/check-owner")
-    public ResponseEntity<Boolean> checkOwner(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Boolean isOwner = wishlistService.ChekOwnerWishlist(id, userPrincipal.getId());
-        return ResponseEntity.ok(isOwner);
-    }
 }

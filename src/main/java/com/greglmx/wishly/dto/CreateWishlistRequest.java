@@ -1,8 +1,6 @@
 
 package com.greglmx.wishly.dto;
 
-import com.greglmx.wishly.model.Wishlist;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

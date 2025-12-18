@@ -28,6 +28,7 @@ public class SecurityConfig {
             "/hello",
             "/wishlist/{id}",
             "/wishlist/{id}/gifts",
+            "/wishlist/{id}/check-owner"
     };
 
     @Bean
