@@ -20,6 +20,8 @@ public class Gift {
     private List<String> images;
     @ElementCollection
     private List<String> tags;
+
+    @Column(length = 8048)
     private String url;
 
     private Long wishlistId;

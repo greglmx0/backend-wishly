@@ -28,7 +28,7 @@ public class GiftValidator implements Validator {
         if (price != null && price > 1000000) {
             errors.rejectValue("price", "price.tooHigh", "price exceeds limit");
         }
-        if (url != null && url.length() > 2048) {
+        if (url != null && url.length() > 8048) {
             errors.rejectValue("url", "url.tooLong", "url too long");
         }
     }
