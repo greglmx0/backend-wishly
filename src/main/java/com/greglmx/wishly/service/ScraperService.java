@@ -3,6 +3,7 @@ package com.greglmx.wishly.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greglmx.wishly.dto.GiftResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
+@Slf4j
 public class ScraperService {
 
     private static final int TIMEOUT_MS = 10000; // 10 seconds timeout
@@ -39,6 +41,7 @@ public class ScraperService {
      * 4. Detect price with regex patterns
      */
     public GiftResponse scrapeUrl(String url) {
+        log.info("[scrapeUrl] Scraping URL: {}", url);
         try {
             // Validate URL format
             new URI(url).toURL();
@@ -78,16 +81,16 @@ public class ScraperService {
             return response;
 
         } catch (MalformedURLException e) {
-            System.out.println("Malformed URL: " + url);
+            log.warn("Malformed URL: {}", url, e);
             throw new IllegalArgumentException("Invalid URL format: " + url);
         } catch (URISyntaxException e) {
-            System.out.println("Invalid URL syntax: " + url);
+            log.warn("Invalid URL syntax: {}", url, e);
             throw new IllegalArgumentException("Invalid URL format: " + url);
         } catch (IOException e) {
-            System.out.println("Error scraping URL: " + url);
+            log.error("Error scraping URL: {}", url, e);
             throw new RuntimeException("Unable to scrape the page: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Unexpected error scraping URL: " + url);
+            log.error("Unexpected error scraping URL: {}", url, e);
             throw new RuntimeException("Unexpected error while scraping: " + e.getMessage());
         }
     }
@@ -114,7 +117,7 @@ public class ScraperService {
                     parseProductNode(node, result, baseUrl);
                 }
             } catch (Exception e) {
-                System.out.println("Failed to parse ld+json block: " + e.getMessage());
+                log.debug("Failed to parse ld+json block", e);
             }
         }
 
@@ -543,7 +546,7 @@ public class ScraperService {
                 try {
                     return Double.parseDouble(priceStr);
                 } catch (NumberFormatException e) {
-                    System.out.println("Failed to parse price: " + priceStr);
+                    log.debug("Failed to parse price: {}", priceStr);
                 }
             }
         }
@@ -565,7 +568,7 @@ public class ScraperService {
                 URL base = new URI(baseUrl).toURL();
                 return base.getProtocol() + ":" + imageUrl;
             } catch (MalformedURLException | URISyntaxException e) {
-                System.out.println("Failed to normalize URL: " + imageUrl);
+                log.debug("Failed to normalize URL: {}", imageUrl);
                 return imageUrl;
             }
         }
@@ -576,7 +579,7 @@ public class ScraperService {
                 URL base = new URI(baseUrl).toURL();
                 return base.getProtocol() + "://" + base.getHost() + imageUrl;
             } catch (MalformedURLException | URISyntaxException e) {
-                System.out.println("Failed to normalize URL: " + imageUrl);
+                log.debug("Failed to normalize URL: {}", imageUrl);
                 return imageUrl;
             }
         }
@@ -590,7 +593,7 @@ public class ScraperService {
             }
             return base.getProtocol() + "://" + base.getHost() + basePath + imageUrl;
         } catch (MalformedURLException | URISyntaxException e) {
-            System.out.println("Failed to normalize URL: " + imageUrl);
+            log.debug("Failed to normalize URL: {}", imageUrl);
             return imageUrl;
         }
     }
@@ -610,7 +613,7 @@ public class ScraperService {
                 return host;
             }
         } catch (MalformedURLException | URISyntaxException e) {
-            System.out.println("Failed to extract domain: " + url);
+            log.debug("Failed to extract domain: {}", url);
         }
         return "Product";
     }
